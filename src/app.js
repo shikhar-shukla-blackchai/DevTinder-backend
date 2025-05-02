@@ -2,13 +2,21 @@ const express = require("express");
 const { connectDB } = require("./config/database"); // Database
 const app = express();
 const { User } = require("./model/user");
-
+const { validateSignUpdata } = require("./utils/validation");
 app.use(express.json());
+const bcrypt = require("bcrypt");
 
-app.post("/signup", async (req, res, next) => {
+app.post("/signup", validateSignUpdata, async (req, res, next) => {
   try {
-    const user = await new User(req.body);
-    console.log(User);
+    const { password, firstName, lastName, age, gender, skills, emailId } =
+      req.body;
+
+    const passwordHashing = await bcrypt.hash(password, 12);
+    console.log(passwordHashing);
+
+    // prettier-ignore
+    const user = new User({firstName, lastName, password: passwordHashing, skills, emailId, age, gender, });
+
     await user.save();
     res.send("User added successfully!");
   } catch (err) {
@@ -51,11 +59,23 @@ app.get("/feed", async (req, res) => {
   }
 });
 
-app.patch("/update", async (req, res) => {
+app.patch("/update/:userId", async (req, res) => {
   try {
-    const _id = req.body._id;
-    const updateData = req.body;
-    const newUserData = await User.findByIdAndUpdate({ _id }, updateData, {
+    const userId = req.params?.userId;
+    const data = req.body;
+
+    // prettier-ignore
+    const ALLOWEDuPDATES = ["firsName", "lastName", "age","gender","skills", "photoUrl"];
+
+    const isAllowedUpdate = Object.keys(data).every((k) =>
+      ALLOWEDuPDATES.includes(k)
+    );
+
+    if (!isAllowedUpdate) {
+      res.status(400).send("Update is not allowed");
+    }
+
+    const newUserData = await User.findByIdAndUpdate({ _id: userId }, data, {
       returnDocument: "after",
       runValidators: true,
     });
