@@ -3,9 +3,11 @@ const { connectDB } = require("./config/database"); // Database
 const app = express();
 const { User } = require("./model/user");
 const { validateSignUpdata } = require("./utils/validation");
-app.use(express.json());
 const bcrypt = require("bcrypt");
+const cookieParser = require("cookie-parser");
 
+app.use(express.json());
+app.use(cookieParser());
 app.post("/signup", validateSignUpdata, async (req, res, next) => {
   try {
     const { password, firstName, lastName, age, gender, skills, emailId } =
@@ -33,17 +35,25 @@ app.post("/login", async (req, res) => {
     if (!user) {
       res.status(404).send("Email not found");
     }
-    console.log(user);
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
       res.status(404).send("Invalid Password");
     }
 
+    res.cookie("token", "lksdflskdfknskldnfknsdlkfnlskdfksdf");
+
     res.send("Login successfully");
   } catch (err) {
     res.status(400).send("Something went wrong");
   }
+});
+
+app.get("/profile", async (req, res) => {
+  const cookie = req.cookies;
+
+  console.log(cookie);
+  res.send("Checking the cookie");
 });
 
 app.get("/user", async (req, res) => {
