@@ -5,9 +5,11 @@ const { User } = require("./model/user");
 const { validateSignUpdata } = require("./utils/validation");
 const bcrypt = require("bcrypt");
 const cookieParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
 
 app.use(express.json());
 app.use(cookieParser());
+
 app.post("/signup", validateSignUpdata, async (req, res, next) => {
   try {
     const { password, firstName, lastName, age, gender, skills, emailId } =
@@ -41,7 +43,9 @@ app.post("/login", async (req, res) => {
       res.status(404).send("Invalid Password");
     }
 
-    res.cookie("token", "lksdflskdfknskldnfknsdlkfnlskdfksdf");
+    const token = jwt.sign({ _id: user._id }, "DEV@TINDER$7777");
+
+    res.cookie("token", token);
 
     res.send("Login successfully");
   } catch (err) {
@@ -50,10 +54,27 @@ app.post("/login", async (req, res) => {
 });
 
 app.get("/profile", async (req, res) => {
-  const cookie = req.cookies;
+  try {
+    const cookie = req.cookies;
 
-  console.log(cookie);
-  res.send("Checking the cookie");
+    const { token } = cookie;
+
+    if (!token) {
+      res.status(400).send("Token is not provided!!!");
+    }
+    const decodedMessage = jwt.verify(token, "DEV@TINDER$7777");
+
+    const user = await User.findById(decodedMessage._id);
+
+    if (!user) {
+      res.status(404).send("User not found");
+    }
+
+    console.log(user);
+    res.send(user);
+  } catch (err) {
+    res.status(400).send("Something went wrong!!!");
+  }
 });
 
 app.get("/user", async (req, res) => {
