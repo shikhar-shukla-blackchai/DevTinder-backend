@@ -3,11 +3,11 @@ const validator = require("validator");
 const validateSignUpdata = (req, res, next) => {
   const { firstName, lastName, password, emailId } = req.body;
   if (!firstName || !lastName) {
-    res.status(400).send("Name is required");
+    res.status(400).send("ERROR : " + err.message);
   } else if (!validator.isEmail(emailId)) {
-    res.status(400).send("Email is not valid " + emailId);
+    res.status(400).send("ERROR : " + err.message);
   } else if (!validator.isStrongPassword(password)) {
-    res.status(400).send("Password is not valid " + password);
+    res.status(400).send("ERROR : " + err.message);
   }
   next();
 };
