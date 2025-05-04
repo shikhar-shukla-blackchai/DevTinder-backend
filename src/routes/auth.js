@@ -11,7 +11,6 @@ authRouter.post("/signup", validateSignUpdata, async (req, res, next) => {
       req.body;
 
     const passwordHashing = await bcrypt.hash(password, 12);
-    console.log(passwordHashing);
 
     // prettier-ignore
     const user = new User({firstName, lastName, password: passwordHashing, skills, emailId, age, gender, });
@@ -35,7 +34,7 @@ authRouter.post("/login", async (req, res) => {
     const isPasswordValid = await user.validatePassword(password);
 
     if (!isPasswordValid) {
-      res.status(404).send("ERROR : Invalid credentials ");
+      res.status(404).send("ERROR : Invalid credentials");
     }
 
     const token = await user.getJwt();
@@ -52,7 +51,6 @@ authRouter.post("/login", async (req, res) => {
 
 authRouter.post("/logout", async (req, res) => {
   res.cookie("token", null, { expires: new Date(Date.now()) });
-  console.log("THIS IS LOGOUT API" + res.cookie);
   res.send("Logout successfully");
 });
 

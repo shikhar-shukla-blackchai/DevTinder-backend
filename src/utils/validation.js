@@ -20,7 +20,6 @@ const validEditProfileData = (req, res, next) => {
     allowedEditFields.includes(field)
   );
 
-  console.log("Im here");
   if (isEditAllowed) {
     next();
   } else {

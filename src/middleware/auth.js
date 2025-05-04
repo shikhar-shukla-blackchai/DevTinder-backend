@@ -18,7 +18,6 @@ const userAuth = async (req, res, next) => {
     if (!user) {
       return res.status(404).send("Token not fond !!!! ");
     }
-    console.log(user);
     req.user = user;
     next();
   } catch (err) {

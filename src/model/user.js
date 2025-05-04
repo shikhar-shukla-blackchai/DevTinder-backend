@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema(
     firstName: {
       type: String,
       require: true,
+      index: true,
       minLength: 3,
       maxLength: 40,
     },
@@ -73,6 +74,8 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+userSchema.index({ firstName: 1, lastName: 1 });
 
 userSchema.methods.getJwt = function () {
   const user = this;
