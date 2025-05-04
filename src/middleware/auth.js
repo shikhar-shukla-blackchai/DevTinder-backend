@@ -25,6 +25,7 @@ const userAuth = async (req, res, next) => {
     res.status(400).send("ERROR : " + err.message);
   }
 };
+
 module.exports = {
   userAuth,
 };

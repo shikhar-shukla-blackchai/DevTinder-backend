@@ -12,6 +12,23 @@ const validateSignUpdata = (req, res, next) => {
   next();
 };
 
+const validEditProfileData = (req, res, next) => {
+  //prettier-ignore
+  const allowedEditFields = ["firstName", "lastName", "age", "gender", "skills", "about",];
+
+  const isEditAllowed = Object.keys(req.body).every((field) =>
+    allowedEditFields.includes(field)
+  );
+
+  console.log("Im here");
+  if (isEditAllowed) {
+    next();
+  } else {
+    res.json({ message: "ERROR: Only specific fields can be edited" });
+  }
+};
+
 module.exports = {
   validateSignUpdata,
+  validEditProfileData,
 };

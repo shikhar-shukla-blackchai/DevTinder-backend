@@ -1,8 +1,8 @@
-const express = require("express");
 const { validateSignUpdata } = require("../utils/validation");
 const { User } = require("../model/user");
 const bcrypt = require("bcrypt");
 
+const express = require("express");
 const authRouter = express.Router();
 
 authRouter.post("/signup", validateSignUpdata, async (req, res, next) => {
@@ -30,12 +30,12 @@ authRouter.post("/login", async (req, res) => {
     const user = await User.findOne({ emailId: emailId });
 
     if (!user) {
-      res.status(404).send("ERROR : " + err.message);
+      res.status(404).send("ERROR : User not found");
     }
     const isPasswordValid = await user.validatePassword(password);
 
     if (!isPasswordValid) {
-      res.status(404).send("ERROR : " + err.message);
+      res.status(404).send("ERROR : Invalid credentials ");
     }
 
     const token = await user.getJwt();
@@ -48,6 +48,12 @@ authRouter.post("/login", async (req, res) => {
   } catch (err) {
     res.status(400).send("ERROR : " + err.message);
   }
+});
+
+authRouter.post("/logout", async (req, res) => {
+  res.cookie("token", null, { expires: new Date(Date.now()) });
+  console.log("THIS IS LOGOUT API" + res.cookie);
+  res.send("Logout successfully");
 });
 
 module.exports = { authRouter };
