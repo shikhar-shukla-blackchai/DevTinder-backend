@@ -15,10 +15,14 @@ authRouter.post("/signup", validateSignUpdata, async (req, res, next) => {
     // prettier-ignore
     const user = new User({firstName, lastName, password: passwordHashing, skills, emailId, age, gender, });
 
+    if (!user) {
+      return res.status(404).send("User data is not valid");
+    }
+
     await user.save();
     res.send("User added successfully!");
   } catch (err) {
-    res.status(500).send("ERROR : " + err.message);
+    res.status(400).send("ERROR : " + err.message);
   }
 });
 
