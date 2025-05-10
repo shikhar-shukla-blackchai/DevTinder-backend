@@ -11,7 +11,7 @@ profileRouter.get("/profile/view", userAuth, async (req, res) => {
     const user = req.user;
     res.send(user);
   } catch (err) {
-    res.status(400).send("ERROR : " + err.message);
+    res.status(401).send("ERROR : " + err.message);
   }
 });
 
@@ -29,10 +29,21 @@ profileRouter.patch("/profile/edit", validEditProfileData, userAuth, async(req, 
         data:loggedInUser
       })
 
-    }catch(err){
-      res.json({message:"ERROR : "+err.message})
-    }
- 
+   } catch (err) {
+  // Mongoose ValidationError
+  if (err.name === "ValidationError") {
+    // Collect specific field error messages
+    const errors = Object.values(err.errors).map(e => e.message);
+
+    res.status(400).json({
+      message: "Validation failed",
+      errors, // array of individual error messages
+    });
+  } else {
+    // Other types of errors
+    res.status(500).json({ message: "An unexpected error occurred" });
+  }
+}
 
   }
 );

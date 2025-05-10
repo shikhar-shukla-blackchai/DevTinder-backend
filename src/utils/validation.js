@@ -14,7 +14,7 @@ const validateSignUpdata = (req, res, next) => {
 
 const validEditProfileData = (req, res, next) => {
   //prettier-ignore
-  const allowedEditFields = ["firstName", "lastName", "age", "gender", "skills", "about",];
+  const allowedEditFields = ["firstName", "lastName", "age", "gender", "skills", "about","photoUrl"];
 
   const isEditAllowed = Object.keys(req.body).every((field) =>
     allowedEditFields.includes(field)
