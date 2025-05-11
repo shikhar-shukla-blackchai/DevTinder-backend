@@ -19,8 +19,13 @@ authRouter.post("/signup", validateSignUpdata, async (req, res, next) => {
       return res.status(404).send("User data is not valid");
     }
 
-    await user.save();
-    res.send("User added successfully!");
+    const data = await user.save();
+    const token = await data.getJwt();
+
+    res.cookie("token", token, {
+      expires: new Date(Date.now() + 8 * 3600000),
+    });
+    res.json({ message: "User added successfully!", data: data });
   } catch (err) {
     res.status(400).send("ERROR : " + err.message);
   }

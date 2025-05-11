@@ -56,7 +56,6 @@ profileRouter.post("/profile/forgotPassword", userAuth, async (req, res) => {
     const validateCurrentPassword = await user.validatePassword(
       currentPassword
     );
-    console.log(validateCurrentPassword);
 
     if (!validateCurrentPassword) {
       //prettier-ignore
